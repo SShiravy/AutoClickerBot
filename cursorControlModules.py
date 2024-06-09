@@ -1,7 +1,7 @@
 from pynput import mouse
 from time import sleep
 from config import SLEEP_CLICK, SLEEP_STEP
-from randomizeFunctions import set_random_pos
+from randomizeFunctions import get_random_pos
 
 
 class CursorControl:
@@ -54,7 +54,7 @@ class CursorControl:
         :return:
         set cursor position -> click -> release -> delay
         """
-        new_pos = set_random_pos(pos, corner_pos)
+        new_pos = get_random_pos(pos, corner_pos)
         self.click(new_pos)
 
     def set_path(self):

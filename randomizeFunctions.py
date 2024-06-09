@@ -2,7 +2,7 @@ from random import randrange
 from math import cos, sin, pi
 
 
-def set_random_pos(pos, corner_pos):
+def get_random_pos(pos, corner_pos):
     """
     :param pos: (x,y) position
     :param corner_pos: (x,y) corner position
