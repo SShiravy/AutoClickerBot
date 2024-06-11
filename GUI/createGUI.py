@@ -1,13 +1,19 @@
 import ttkbootstrap as ttk
 from PIL import Image, ImageTk
+import webbrowser
 from config import (WINDOW_MIN_SIZE, THEME, LOGO_SCALE,
                     GENERAL_PADDING, BUTTON_WIDTH,
-                    TASK_WIDTH, APP_ICON, IMAGE_LOGO)
+                    TASK_WIDTH, APP_ICON, IMAGE_LOGO, TELEGRAM_CHANNEL_LINK)
 
 
 # TODO: disable buttons after click one
 # TODO: make task queue frame scrollable
-# TODO: solve the problem of logo image
+# TODO: add alert dialog for creating clicker bot
+# TODO: change icon and logo
+
+def open_telegram_channel(event):
+    webbrowser.open_new(TELEGRAM_CHANNEL_LINK)
+
 
 class UserInterface:
     def __new__(cls):
@@ -18,11 +24,7 @@ class UserInterface:
 
     def __create_interface(self):
         """
-        all created Widgets:
-        - canvas image as logo
-        - Button
-        - ScrolledText for log
-        - Frame for task queue
+        all created Widgets: - canvas image as logo - Button - ScrolledText for log - Frame for task queue
         """
         # Create Window ----------------
         self.window = ttk.Window(themename=THEME, iconphoto=None, minsize=WINDOW_MIN_SIZE)
@@ -30,19 +32,13 @@ class UserInterface:
         self.window.title('Auto Clicker Tool')
 
         # logo image ------------------
-        canvas = ttk.Canvas(self.window, height=LOGO_SCALE, width=LOGO_SCALE)
-        image = Image.open(IMAGE_LOGO)
-        image = image.resize((LOGO_SCALE, LOGO_SCALE))
-        pic = ImageTk.PhotoImage(image)
-        canvas.create_image(int(LOGO_SCALE / 2), int(LOGO_SCALE / 2), image=pic)
-        canvas.grid(row=0, column=0, rowspan=2, padx=GENERAL_PADDING, pady=GENERAL_PADDING)
-
+        self.__logo()
         # Create Buttons ---------------
         self.random_click_button = ttk.Button(self.window, text='add steps',
-                                              bootstyle="primary", width=BUTTON_WIDTH, command=self.add_random_clicker)
+                                              bootstyle="primary", width=BUTTON_WIDTH, command=self.add_step_clicker)
 
         self.path_button = ttk.Button(self.window, text='add random clicker',
-                                      bootstyle="primary", width=BUTTON_WIDTH, command=self.add_step_clicker)
+                                      bootstyle="primary", width=BUTTON_WIDTH, command=self.add_random_clicker)
 
         self.delay_button = ttk.Button(self.window, text='add delay',
                                        bootstyle="primary", width=BUTTON_WIDTH, command=self.delay_command)
@@ -59,7 +55,23 @@ class UserInterface:
 
         self.__grid_widgets()
 
+    def __logo(self):
+        """
+        Create Logo image and open Channel Link by clicking on it
+        """
+        logo_image = Image.open(IMAGE_LOGO)
+        logo_image = logo_image.resize((LOGO_SCALE, LOGO_SCALE))
+        photo_logo = ImageTk.PhotoImage(logo_image)
+        canvas = ttk.Canvas(self.window, height=LOGO_SCALE, width=LOGO_SCALE)
+        logo_widget = canvas.create_image(int(LOGO_SCALE / 2), int(LOGO_SCALE / 2), image=photo_logo)
+        canvas.image = photo_logo
+        canvas.grid(row=0, column=0, rowspan=2, padx=GENERAL_PADDING, pady=GENERAL_PADDING)
+        canvas.tag_bind(logo_widget, "<Button-1>", open_telegram_channel)
+
     def __grid_widgets(self):
+        """
+        griding all widgets
+        """
         self.random_click_button.grid(row=0, column=1, padx=GENERAL_PADDING)
         self.path_button.grid(row=0, column=2, padx=GENERAL_PADDING)
         self.delay_button.grid(row=0, column=3, padx=GENERAL_PADDING)
@@ -71,12 +83,21 @@ class UserInterface:
                               pady=(GENERAL_PADDING, GENERAL_PADDING/2), sticky='nsew')
 
     def show_log_msg(self, msg):
+        """
+        :param msg: str
+        show msg in log box
+        """
         self.log_text.config(state="normal")
         log_msg = f'--- {msg}\n'
         self.log_text.insert(ttk.INSERT, log_msg)
         self.log_text.config(state="disabled")
 
     def show_new_task(self, task_name, task_obj):
+        """
+        :param task_name: str
+        :param task_obj: click or path or delay obj
+        add a button as a task in task queue
+        """
         # TODO: add click command for toggle
         new_task = ttk.Button(self.tasks_queue, text=task_name, bootstyle="secondary", width=TASK_WIDTH)
         new_task.grid(pady=2, padx=5)
