@@ -1,5 +1,5 @@
 SLEEP_CLICK = 0.15  # s / sleep time after each click
-SLEEP_STEP = 0.3  # s / sleep time after each step !! it will add up to SLEEP_CLICK
+SLEEP_STEP = 0.5  # s / sleep time after each step !! it will add up to SLEEP_CLICK
 
 # -------------------- BOT SETTING --------------------------
 
