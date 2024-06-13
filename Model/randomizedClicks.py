@@ -24,44 +24,28 @@ def get_random_pos(pos, corner_pos):
 
 class RandomClicks(CursorControl):
     def __init__(self):
-        super().__init__()
         self.clks_pos = None
         self.corner_clks_pos = None
         self.t_clks = None
         self.n_clks = None
-        self.mouse_listener = None
-        self.set_clks_positions()
+        super().__init__()
+        self.set_clks_listener()
 
-    def set_clks_positions(self):
+    def on_click_listener(self, x, y, button, pressed):
         """
         record Center and Corner of random clks state
         """
-
-        def on_click(x, y, button, pressed):
-            if button == mouse.Button.left and pressed:
-                if self.clks_pos is None:
-                    self.clks_pos = self.cursor.position
-                    UserInterface().insert_log_msg('center recorded | click the corner')
-                elif self.corner_clks_pos is None:
-                    self.corner_clks_pos = self.cursor.position
-                    UserInterface().insert_log_msg('corner recorded | press set button')
-                else:
-                    self.release_listener()
-            if button == mouse.Button.right and pressed:
+        if button == mouse.Button.left and pressed:
+            if self.clks_pos is None:
+                self.clks_pos = self.cursor.position
+                UserInterface().insert_log_msg('center recorded | click the corner')
+            elif self.corner_clks_pos is None:
+                self.corner_clks_pos = self.cursor.position
+                UserInterface().insert_log_msg('corner recorded | press set button')
+            else:
                 self.release_listener()
-
-        self.mouse_listener = mouse.Listener(on_click=on_click)
-        self.mouse_listener.start()
-
-    def release_listener(self):
-        """
-        release mouse listener and make steps an unchangeable tuple
-        """
-        try:
-            self.mouse_listener.stop()
-        except:
-            pass
-        self.mouse_listener = None
+        if button == mouse.Button.right and pressed:
+            self.release_listener()
 
     def __random_clk(self):
         """
@@ -94,12 +78,11 @@ class RandomClicks(CursorControl):
         the priority is time, no parameters returns False /
         we always use randomized position between clks_pos and corner_clks_pos
         """
-        n_clicks = self.total_clicks
+        total_click = self.total_clicks
+        elapsed_time = self.elapsed_time
         if self.t_clks:
             self.__do_clks_t_limit(self.t_clks)
         elif self.n_clks:
             self.__do_clks_n_limit(self.n_clks)
-        else:
-            return False
-            # TODO: add print or log
-        return abs(n_clicks - self.total_clicks)
+
+        return self.total_clicks-total_click, round(self.elapsed_time-elapsed_time)

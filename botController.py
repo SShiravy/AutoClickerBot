@@ -8,14 +8,15 @@ class Task:
     def __init__(self, name, task):
         self.name = name
         self.clks_task = task
-        self.ui_widget = None
+        self.ui_widget = UserInterface().run_button
 
     def __call__(self, *args, **kwargs):
         self.ui_widget.config(state='normal')
         self.ui_widget.update_idletasks()
-        self.clks_task()
+        total_clicks, elapsed_time = self.clks_task()
         self.ui_widget.config(state='disable')
         self.ui_widget.update_idletasks()
+        UserInterface().insert_log_msg(f'{self.name} done after {elapsed_time}s and {total_clicks} clicks')
 
     def _delete(self):
         self.ui_widget.destroy()
@@ -41,7 +42,7 @@ class Controller:
         self.view.set_button.config(command=self.__set_button)
 
     def __run_button(self):
-        # TODO: how much turn it should take whole cycle
+        # TODO: how much turn it should take whole cycle, creat a pop-up window for it or not
         if self.tasks_list:
             self.view.insert_log_msg('| Start Executing All Tasks |')
             self.view.disable_buttons()
@@ -88,14 +89,16 @@ class Controller:
             # create ui widget and pass it to task , release current task attr
             self.view.pop_up_window()
             delay_time = 2
-            self.current_task = Task('delay', lambda: time.sleep(delay_time))
+
+            def time_delay():
+                time.sleep(delay_time)
+                UserInterface().insert_log_msg(f'{delay_time}s program stopped')
+                return 0,delay_time
+            self.current_task = Task('delay', time_delay)
             self.tasks_list.append(self.current_task)
             self.current_task.ui_widget = self.view.insert_new_task(self.current_task.name)
             self.view.insert_log_msg(f'{self.current_task.name} added to queue')
             self.current_task = None
-
-
-
 
 
 Controller()

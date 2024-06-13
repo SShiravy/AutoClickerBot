@@ -1,13 +1,11 @@
 import ttkbootstrap as ttk
+from ttkbootstrap.scrolled import ScrolledFrame
 from PIL import Image, ImageTk
 import webbrowser
 from config import (WINDOW_MIN_SIZE, THEME, LOGO_SCALE,
                     GENERAL_PADDING, BUTTON_WIDTH,
                     TASK_WIDTH, APP_ICON, IMAGE_LOGO, TELEGRAM_CHANNEL_LINK)
 
-
-# TODO: disable buttons after click one
-# TODO: make task queue frame scrollable
 # TODO: add alert dialog for creating clicker bot
 # TODO: change icon and logo
 
@@ -51,7 +49,8 @@ class UserInterface:
         self.log_text = ttk.ScrolledText(self.window, state="disabled")
 
         # Create task queue frame ------------------
-        self.tasks_queue = ttk.Frame(self.window, bootstyle="dark")
+        self.queue_frame = ttk.Frame(self.window, bootstyle='dark')
+        self.tasks_queue = ScrolledFrame(self.queue_frame, bootstyle="dark", width=190,height=690)
         task_frame_label = ttk.Label(self.tasks_queue, text='Tasks', width=TASK_WIDTH, bootstyle="light",
                                      # textvariable=text_var,
                                      anchor=ttk.CENTER,
@@ -90,10 +89,11 @@ class UserInterface:
         self.seperator_line.grid(row=3, column=0, columnspan=4, padx=GENERAL_PADDING, sticky='ew')
         self.log_text.grid(row=4, column=0, columnspan=4, padx=GENERAL_PADDING,
                            pady=(0, GENERAL_PADDING / 2), sticky='ew')
-        self.tasks_queue.grid(row=0, column=4, rowspan=6, padx=GENERAL_PADDING / 2,
+        self.queue_frame.grid(row=0, column=4, rowspan=6, padx=GENERAL_PADDING / 2,
                               pady=(GENERAL_PADDING, GENERAL_PADDING / 2), sticky='nsew')
-        self.run_button.grid(row=5, column=0, columnspan=4, padx=GENERAL_PADDING, pady=GENERAL_PADDING / 2,
-                             sticky='ew')
+        self.tasks_queue.grid(sticky='nsew')
+        self.run_button.grid(row=5, column=0, columnspan=4, padx=GENERAL_PADDING,
+                             pady=GENERAL_PADDING / 2, sticky='ew')
 
     def insert_log_msg(self, msg):
         """
@@ -102,7 +102,7 @@ class UserInterface:
         """
         self.log_text.config(state="normal")
         log_msg = f'--- {msg}\n'
-        self.log_text.insert(ttk.INSERT, log_msg)
+        self.log_text.insert(ttk.END, log_msg)
         self.log_text.config(state="disabled")
         # show changes ---
         self.window.update_idletasks()
@@ -110,7 +110,6 @@ class UserInterface:
     def insert_new_task(self, task_name):
         """
         :param task_name: str
-        :param task_obj: click or path or delay obj
         add a button as a task in task queue
         """
         # TODO: add click command for toggle
@@ -126,7 +125,7 @@ class UserInterface:
         print('pop-up ')
         pass
 
-    def __change_buttons_state(self,state):
+    def __change_buttons_state(self, state):
         for widget in self.window.winfo_children():
             if isinstance(widget, ttk.Button):
                 widget.config(state=state)

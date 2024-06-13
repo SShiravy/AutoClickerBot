@@ -1,6 +1,5 @@
 
-# TODO : add escape key ,add log, to another airdrop bot and another account : 'ChngBot' state and
-#  'ChngAccount' State handle queue of states and timing add View
+# TODO : add escape key ,add log,
 
 # Naming Conventions : modules are camelCase, classes are PascalCase and variables and functions are snake_case
 
