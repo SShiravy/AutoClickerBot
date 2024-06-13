@@ -3,6 +3,8 @@ from time import sleep
 from config import SLEEP_CLICK, SLEEP_STEP
 
 
+# TODO: add step initialization and release method
+
 class CursorControl:
     """
     to have easier process when we want to click somewhere (exact position or randomized)

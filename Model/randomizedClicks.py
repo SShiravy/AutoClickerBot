@@ -1,6 +1,8 @@
 from random import randrange
 from math import cos, sin, pi
-from cursorControlModule import CursorControl
+from Model.cursorControlModule import CursorControl
+from pynput import mouse
+from View.createGUI import UserInterface
 
 
 def get_random_pos(pos, corner_pos):
@@ -25,18 +27,41 @@ class RandomClicks(CursorControl):
         super().__init__()
         self.clks_pos = None
         self.corner_clks_pos = None
-        self.set_clks_positions()
         self.t_clks = None
         self.n_clks = None
+        self.mouse_listener = None
+        self.set_clks_positions()
 
     def set_clks_positions(self):
         """
-        :return:
         record Center and Corner of random clks state
         """
-        self.clks_pos = self.get_position()
-        # TODO: add some print or log
-        self.corner_clks_pos = self.get_position()
+
+        def on_click(x, y, button, pressed):
+            if button == mouse.Button.left and pressed:
+                if self.clks_pos is None:
+                    self.clks_pos = self.cursor.position
+                    UserInterface().insert_log_msg('center recorded | click the corner')
+                elif self.corner_clks_pos is None:
+                    self.corner_clks_pos = self.cursor.position
+                    UserInterface().insert_log_msg('corner recorded | press set button')
+                else:
+                    self.release_listener()
+            if button == mouse.Button.right and pressed:
+                self.release_listener()
+
+        self.mouse_listener = mouse.Listener(on_click=on_click)
+        self.mouse_listener.start()
+
+    def release_listener(self):
+        """
+        release mouse listener and make steps an unchangeable tuple
+        """
+        try:
+            self.mouse_listener.stop()
+        except:
+            pass
+        self.mouse_listener = None
 
     def __random_clk(self):
         """

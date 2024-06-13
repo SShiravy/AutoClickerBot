@@ -1,13 +1,13 @@
 
 # TODO : add escape key ,add log, to another airdrop bot and another account : 'ChngBot' state and
-#  'ChngAccount' State handle queue of states and timing add GUI
+#  'ChngAccount' State handle queue of states and timing add View
 
 # Naming Conventions : modules are camelCase, classes are PascalCase and variables and functions are snake_case
 
 
 from pynput import keyboard
-from pathStepClicks import StepClicks
-from randomizedClicks import RandomClicks
+from Model.pathStepClicks import StepClicks
+from Model.randomizedClicks import RandomClicks
 
 if __name__ == '__main__':
 

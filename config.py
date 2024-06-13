@@ -9,11 +9,11 @@ T_MAX_RUN = []  # maximum time of running bot
 N_CLKS_EARN_LIST = []  # number of earn click for each clicking airdrop
 T_CLKS_EARN_LIST = []  # period time of earn click for each clicking airdrop
 
-# --------------------- GUI SETTING -------------------------
+# --------------------- View SETTING -------------------------
 
 THEME = 'darkly'
-APP_ICON = "app_icon.ico"
-IMAGE_LOGO = "app_logo.png"
+APP_ICON = "View/app_icon.ico"
+IMAGE_LOGO = "View/app_logo.png"
 WINDOW_MIN_SIZE = (800, 600)
 LOGO_SCALE = 120
 GENERAL_PADDING = 20
