@@ -1,7 +1,10 @@
 import time
+from pynput import keyboard
 from View.createGUI import UserInterface
+from View.popupModules import PopupDelayInput, PopupRandomButton
 from Model.pathStepClicks import StepClicks
 from Model.randomizedClicks import RandomClicks
+from config import SLEEP_STEP
 
 
 class Task:
@@ -31,7 +34,9 @@ class Controller:
             cls._instance.tasks_list = []
             cls._instance.current_task = None
             cls._instance.__match_buttons()
+            cls._instance.esc_key = False
             cls._instance.view.window.mainloop()
+
         return cls._instance
 
     def __match_buttons(self):
@@ -44,10 +49,9 @@ class Controller:
     def __run_button(self):
         # TODO: how much turn it should take whole cycle, creat a pop-up window for it or not
         if self.tasks_list:
-            self.view.insert_log_msg('| Start Executing All Tasks |')
             self.view.disable_buttons()
-            for t in self.tasks_list:
-                t()
+            self.executing_tasks()
+            self.view.enable_buttons()
         else:
             self.view.insert_log_msg('there is no task!!')
 
@@ -57,12 +61,6 @@ class Controller:
             stop listening mouse - pop-up task setting window - append task to queue
         """
         if self.current_task:
-            # end of setting method and listening
-            self.current_task.clks_task.release_listener()
-            # show the pop-up window for setting
-            self.view.pop_up_window()
-            # TODO: if the pop-up window not canceled the task
-            # TODO: get the pop-up setting and pass it to task
             # create ui widget and pass it to task , release current task attr
             self.tasks_list.append(self.current_task)
             self.current_task.ui_widget = self.view.insert_new_task(self.current_task.name)
@@ -73,32 +71,59 @@ class Controller:
         """
         msg hint to user then create path task obj
         """
-        # TODO: log msg after each click
         if self.current_task is None:
+            popup = PopupDelayInput(SLEEP_STEP,'delay between\neach click')
+            self.view.window.wait_window(popup.window)
+            if popup.ok is False:
+                return False
             self.view.insert_log_msg('click all steps you want, press "set" button at the end')
-            self.current_task = Task('take path', StepClicks())
+            self.current_task = Task('take path', StepClicks(popup.time_delay))
 
     def __add_random_clks_button(self):
         if self.current_task is None:
+            popup = PopupRandomButton()
+            self.view.window.wait_window(popup.window)
+            if popup.ok is False:
+                return False
             self.view.insert_log_msg('click the center of object')
-            self.current_task = Task('random clicks', RandomClicks())
+            self.current_task = Task('random clicks', RandomClicks(popup.n_clicks, popup.time_duration))
 
     def __add_delay_button(self):
         if self.current_task is None:
-            # TODO: get data of delay from pop-up window
-            # create ui widget and pass it to task , release current task attr
-            self.view.pop_up_window()
-            delay_time = 2
+            popup = PopupDelayInput(5)
+            self.view.window.wait_window(popup.window)
+            if popup.ok is False:
+                return False
+            delay_time = popup.time_delay
 
             def time_delay():
                 time.sleep(delay_time)
                 UserInterface().insert_log_msg(f'{delay_time}s program stopped')
-                return 0,delay_time
+                return 0, delay_time
+            # create ui widget and pass it to task , release current task attr
             self.current_task = Task('delay', time_delay)
             self.tasks_list.append(self.current_task)
             self.current_task.ui_widget = self.view.insert_new_task(self.current_task.name)
             self.view.insert_log_msg(f'{self.current_task.name} added to queue')
             self.current_task = None
 
+    def executing_tasks(self):
+        def on_press(key):
+            if key == keyboard.Key.esc:
+                self.esc_key = True
+                keyboard_listener.stop()
+
+        keyboard_listener = keyboard.Listener(on_press=on_press)
+        keyboard_listener.start()
+        self.view.insert_log_msg('| Start Executing All Tasks, press esc key to stop |')
+        for t in self.tasks_list:
+            n_clks,elapsed_t = t()
+            if self.esc_key:
+                self.view.insert_log_msg('| esc key pressed |')
+                break
+        self.esc_key = False
+
+
+# TODO: solve problem of running over and over for add steps
 
 Controller()

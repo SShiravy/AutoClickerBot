@@ -1,5 +1,4 @@
 
-# TODO : add escape key ,add log,
 
 # Naming Conventions : modules are camelCase, classes are PascalCase and variables and functions are snake_case
 
