@@ -23,11 +23,11 @@ def get_random_pos(pos, corner_pos):
 
 
 class RandomClicks(CursorControl):
-    def __init__(self):
+    def __init__(self, t_clks=None, n_clks=None):
         self.clks_pos = None
         self.corner_clks_pos = None
-        self.t_clks = None
-        self.n_clks = None
+        self.t_clks = t_clks
+        self.n_clks = n_clks
         super().__init__()
         self.set_clks_listener()
 
@@ -85,4 +85,4 @@ class RandomClicks(CursorControl):
         elif self.n_clks:
             self.__do_clks_n_limit(self.n_clks)
 
-        return self.total_clicks-total_click, round(self.elapsed_time-elapsed_time)
+        return self.total_clicks-total_click, round(self.elapsed_time-elapsed_time,2)

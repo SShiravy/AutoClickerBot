@@ -4,8 +4,8 @@ from config import SLEEP_STEP
 
 
 class StepClicks(CursorControl):
-    def __init__(self):
-        self.delay = SLEEP_STEP
+    def __init__(self, delay=SLEEP_STEP):
+        self.delay = delay
         self.steps = []
         super().__init__()
         self.set_clks_listener()
@@ -32,4 +32,4 @@ class StepClicks(CursorControl):
         elapsed_time = self.elapsed_time
         for step in self.steps:
             self.click(step)
-        return self.total_clicks-total_click, round(self.elapsed_time-elapsed_time)
+        return self.total_clicks-total_click, round(self.elapsed_time-elapsed_time,2)

@@ -6,8 +6,9 @@ from config import (WINDOW_MIN_SIZE, THEME, LOGO_SCALE,
                     GENERAL_PADDING, BUTTON_WIDTH,
                     TASK_WIDTH, APP_ICON, IMAGE_LOGO, TELEGRAM_CHANNEL_LINK)
 
-# TODO: add alert dialog for creating clicker bot
+
 # TODO: change icon and logo
+
 
 def open_telegram_channel(event):
     webbrowser.open_new(TELEGRAM_CHANNEL_LINK)
@@ -50,7 +51,7 @@ class UserInterface:
 
         # Create task queue frame ------------------
         self.queue_frame = ttk.Frame(self.window, bootstyle='dark')
-        self.tasks_queue = ScrolledFrame(self.queue_frame, bootstyle="dark", width=190,height=690)
+        self.tasks_queue = ScrolledFrame(self.queue_frame, bootstyle="dark", width=190, height=690)
         task_frame_label = ttk.Label(self.tasks_queue, text='Tasks', width=TASK_WIDTH, bootstyle="light",
                                      # textvariable=text_var,
                                      anchor=ttk.CENTER,
@@ -121,10 +122,6 @@ class UserInterface:
         self.window.update_idletasks()
         return new_task_widget
 
-    def pop_up_window(self):
-        print('pop-up ')
-        pass
-
     def __change_buttons_state(self, state):
         for widget in self.window.winfo_children():
             if isinstance(widget, ttk.Button):
@@ -143,6 +140,4 @@ if __name__ == '__main__':
     U.insert_new_task('mio', 0)
     U.insert_log_msg('hi there where should i click')
     U.insert_log_msg('hi there where should i click')
-    # TODO: handle the main loop and insert some widget after it
-    # TODO: Text Scroller should scroll down automatically
     U.window.mainloop()
